@@ -24,7 +24,6 @@
 - [Catatan ekspor GNS3](gns3/README.md): isi dan batasan ekspor.
 - [Daftar kelengkapan](KELENGKAPAN.md): berkas dan bukti yang belum diterima.
 
-**Status paket: dokumentasi pengumpulan yang masih perlu bukti tambahan.** Skrip dari Rootkit, Penny, Abbey, Obladi, Desmond, Oblada, Molly, Prab, dan Tedd telah diarsipkan per node dan dipetakan per soal. Skrip benchmark nomor 16 adalah rekonstruksi dari perintah dalam laporan Jude, bukan salinan asli. Ekspor GNS3 telah disimpan, tetapi tidak menyertakan konfigurasi aktif di `/etc/bind`, `/etc/apache2`, dan `/etc/nginx`. Bukti akhir nomor 16–20 dan uji pemulihan belum tersedia. Rincian ada pada [daftar kelengkapan](KELENGKAPAN.md).
 
 ## Topologi layanan
 
