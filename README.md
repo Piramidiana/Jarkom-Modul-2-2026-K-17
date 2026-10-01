@@ -6,13 +6,12 @@
 
 | Anggota | NRP | Bagian yang dikerjakan |
 | --- | --- | --- |
-| Dian Piramidiana Rachmatika | 5027251031 | 1–3 dan 9–15, termasuk nomor 14 |
-| Jude Athala Yazid Sari | 5027251098 | 4–8 dan 16–19; laporan Jude juga menyatakan pengerjaan 20 |
+| Dian Piramidiana Rachmatika | 5027251031 | 1–3 dan 9–15 |
+| Jude Athala Yazid Sari | 5027251098 | 4–8 dan 16–19 |
 
 ## Laporan
 
-[Laporan_Modul_2_K17.md](Laporan_Modul_2_K17.md) disusun menurut nomor 1–20, seperti format pengumpulan Modul 1.
-
+[Laporan_Modul_2_K17.md](Laporan_Modul_2_K17.md) disusun menurut nomor 1–20.
 ## Isi pengumpulan
 
 - [Laporan praktikum](Laporan_Modul_2_K17.md): uraian per nomor dan bukti.
