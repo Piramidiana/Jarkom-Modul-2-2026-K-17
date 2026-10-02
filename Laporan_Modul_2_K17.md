@@ -5,7 +5,8 @@
 | Identitas | Keterangan |
 | --- | --- |
 | Kelompok | K-17 |
-| Anggota | Dian Piramidiana Rachmatika (5027251031) dan Jude Athala Yazid Sari (5027251098) |
+| Anggota | Dian Piramidiana Rachmatika (5027251031) 
+Jude Athala Yazid Sari (5027251098) |
 | Domain | `k17.com` |
 | Prefix IP | `10.72.x.x/24` |
 | Proyek | [K-17-MODUL-2.gns3project](01_Project_GNS3/K-17-MODUL-2.gns3project) |
