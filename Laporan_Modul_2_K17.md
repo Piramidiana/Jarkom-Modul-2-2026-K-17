@@ -6,7 +6,7 @@
 | --- | --- |
 | Kelompok | K-17 |
 | Anggota | Dian Piramidiana Rachmatika (5027251031) |
-| Anggita | Jude Athala Yazid Sari (5027251098) |
+| Anggota | Jude Athala Yazid Sari (5027251098) |
 | Domain | `k17.com` |
 | Prefix IP | `10.72.x.x/24` |
 | Proyek | [K-17-MODUL-2.gns3project](01_Project_GNS3/K-17-MODUL-2.gns3project) |
@@ -116,7 +116,8 @@ curl http://oblada.k17.com/profil
 curl http://molly.k17.com/profil
 ```
 
-![Uji halaman dinamis Oblada dan Molly](04_Dokumentasi/assets/10-core-php-rewrite-hostname.png)
+<img width="475" height="310" alt="10-core-php-rewrite-hostname" src="https://github.com/user-attachments/assets/1ef80a23-1508-47cc-af3e-62d0d8a830b9" />
+
 
 ## 11. Konfigurasikan Penny (menggunakan Apache) sebagai reverse proxy yang mengarah ke semua node di area vault (Obladi & Desmond). Sementara itu, konfigurasikan Abbey (menggunakan Nginx) sebagai reverse proxy menuju area core (Oblada & Molly). Pastikan kedua gerbang ini meneruskan identitas asli pengunjung ke server backend dengan melakukan forwarding header Host dan X-Real-IP. Buktikan bahwa Penny dan Abbey berhasil mendistribusikan lalu lintas dengan tepat.
 
@@ -127,9 +128,11 @@ for i in 1 2 3 4; do curl -s http://www.k17.com/ | grep 'Repositori Statis'; don
 for i in 1 2 3 4; do curl -s http://static.k17.com/profil | grep 'Dilayani oleh'; done
 ```
 
-![Pembagian permintaan oleh Penny](04_Dokumentasi/assets/11-penny-proxy-evidence.png)
+<img width="959" height="599" alt="11-penny-proxy-evidence" src="https://github.com/user-attachments/assets/04372b39-95e1-4736-a436-6361879f7d20" />
 
-![Pembagian permintaan oleh Abbey](04_Dokumentasi/assets/11-abbey-proxy-evidence.png)
+
+<img width="925" height="569" alt="11-abbey-proxy-evidence" src="https://github.com/user-attachments/assets/60dfd09d-2847-47e8-903c-0028c677d340" />
+
 
 ## 12. Terdapat ruang khusus di penny yang yang menyimpan dokumen rahasia sindikat, oleh karena itu terapkan perlindungan basic authentication untuk path /admin. Akses ke jalur tersebut harus menolak pengunjung tanpa kredensial, dan hanya mengizinkan masuk jika menggunakan credential berikut:
 username
@@ -145,7 +148,8 @@ curl -I http://www.k17.com/admin/
 curl -u prabs -i http://www.k17.com/admin/
 ```
 
-![Uji login halaman admin](04_Dokumentasi/assets/12-penny-basic-auth.png)
+<img width="431" height="158" alt="12-penny-basic-auth" src="https://github.com/user-attachments/assets/39f2f001-4c64-41c6-8501-08c06c466e97" />
+
 
 ## 13. Setiap entitas dari luar harus memanggil gerbang dengan nama kanoniknya. Jika ada yang mencoba mengakses IP penny dan domain  penny.xxx.com, paksa sistem untuk melakukan redirect secara permanen (status code 301) menuju www.xxx.com. Sebaliknya, jika ada yang mengakses IP abbey dan domain abbey.xxx.com, lakukan redirect sementara (status code 302) menuju static.xxx.com.
 
@@ -156,7 +160,8 @@ curl -I http://penny.k17.com/admin/
 curl -I 'http://abbey.k17.com/profil?uji=1'
 ```
 
-![Uji pengalihan domain](04_Dokumentasi/assets/13-canonical-redirect.png)
+<img width="433" height="234" alt="13-canonical-redirect" src="https://github.com/user-attachments/assets/a25d1cc1-0400-4c9e-b995-e71a0765ce6c" />
+
 
 ## 14. Di dalam The Mesh, rekam jejak tidak boleh dipalsukan oleh sistem. Pastikan access log pada setiap server web di area vault maupun area core mencatat alamat IP asli milik client (pengunjung) yang diteruskan oleh gerbang, dan bukan mencatat IP dari Penny ataupun Abbey.
 
@@ -165,9 +170,11 @@ Penny mengirim IP pengunjung ke backend Vault; Abbey melakukan hal yang sama ke 
 
 Hasil log: Vault mencatat `proxy=10.72.4.2`, sedangkan Core mencatat `proxy=10.72.3.2`.
 
-![Log backend Vault](04_Dokumentasi/assets/14-vault-real-ip.png)
+<img width="487" height="558" alt="14-vault-real-ip" src="https://github.com/user-attachments/assets/646f33eb-0edb-4d43-bddb-f11c9ec9664a" />
 
-![Log backend Core](04_Dokumentasi/assets/14-core-real-ip.png)
+
+<img width="515" height="565" alt="14-core-real-ip" src="https://github.com/user-attachments/assets/fa5c8745-76f8-4479-9713-de301e9a2769" />
+
 
 ## 15. Rootkit menginstruksikan pembuatan jalur proxy khusus yang berdiri sendiri. Pada penny buat reverse proxy untuk path /eternal yang menyajikan directory /var/www/eternal, dan pastikan path ini dapat mengeksekusi (rendering) file php. Pada abbey, buat jalur /orion yang menyajikan directory /var/www/orion, secara murni statis tanpa perlu rendering php.
 
@@ -179,7 +186,7 @@ curl -I http://static.k17.com/orion/
 curl -I http://static.k17.com/orion/uji.php
 ```
 
-![Uji Eternal dan Orion](04_Dokumentasi/assets/15-eternal-orion.png)
+<img width="400" height="208" alt="15-eternal-orion" src="https://github.com/user-attachments/assets/de2a29d4-f6ef-40a7-afec-e67843d10dc9" />
 
 ## 16. Benchmark
 
