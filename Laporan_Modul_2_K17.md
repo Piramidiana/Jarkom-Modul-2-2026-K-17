@@ -52,7 +52,7 @@ ping -c 3 10.72.1.2
 Hasil: forwarding bernilai `1`, aturan MASQUERADE muncul, dan ping Delta ke Alpha berhasil 3/3.
 
 ## 4. DNS utama dan pendamping
-
+Mendirikan hierarki DNS Otoritatif. Node prab bertindak sebagai Master yang menyimpan zone file utama, sedangkan tedd sebagai Slave untuk redundansi. Di sini kita juga mengonfigurasi forwarder agar query yang tidak dikenal dilempar ke router (gateway luar), serta mengatur resolver order di sisi klien.
 Prab (`10.72.5.2`) menjadi DNS utama dan Tedd (`10.72.5.3`) menjadi DNS pendamping. Keduanya menjalankan BIND dan pernah menjawab permintaan SOA `k17.com` dengan serial yang sama pada pengujian awal.
 
 ```sh
@@ -63,7 +63,7 @@ dig @10.72.5.3 k17.com SOA +short
 Hasil saat diuji: kedua server menjawab serial `2026093001`. Serial dapat berubah ketika zona diperbarui.
 
 ## 5. A record
-
+Pendefinisian identitas node secara system-wide dan pemetaan DNS (Forward Lookup). Memastikan setiap entitas memiliki hostname yang valid dan terdaftar A Record-nya di server DNS.
 Zona `k17.com` berisi alamat host Alpha sampai Molly. Contoh pengujian dari Alpha: `obladi.k17.com` menjawab `10.72.5.4` melalui Prab, dan `desmond.k17.com` menjawab `10.72.5.5` melalui Tedd.
 
 ```sh
@@ -72,13 +72,14 @@ nslookup desmond.k17.com 10.72.5.3
 ```
 
 ## 6. Transfer zona
+Memvalidasi proses replikasi zona (AXFR/IXFR) antara Master dan Slave. Indikator keberhasilannya adalah sinkronisasi nilai Serial Number pada record SOA (Start of Authority) di kedua server.
 
 Tedd mengambil zona utama dan zona reverse subnet 3, 4, serta 5 dari Prab. Kecocokan SOA di kedua server menjadi salah satu pemeriksaan transfer zona.
 
 Hasil pemeriksaan awal: Prab dan Tedd menjawab SOA yang sama. Keluaran transfer zona sesudah perubahan akhir belum disertakan.
 
 ## 7. Nama layanan
-
+(Service Records & Load Balancing): Penggunaan CNAME untuk aliasing layanan web (seperti www dan static) dan A Record ganda (seperti vault dan core) yang secara otomatis memicu mekanisme DNS Round-Robin untuk distribusi beban (load balancing) sederhana.
 Nama `vault.k17.com` mempunyai dua alamat backend (`10.72.5.4` dan `10.72.5.5`), sedangkan `core.k17.com` mempunyai `10.72.5.6` dan `10.72.5.7`. Alias `www` menuju Penny dan `static` menuju Abbey.
 
 ```sh
@@ -87,7 +88,7 @@ dig @10.72.5.2 core.k17.com +short
 ```
 
 ## 8. Reverse DNS
-
+(Service Records & Load Balancing): Penggunaan CNAME untuk aliasing layanan web (seperti www dan static) dan A Record ganda (seperti vault dan core) yang secara otomatis memicu mekanisme DNS Round-Robin untuk distribusi beban (load balancing) sederhana.
 Zona reverse subnet 3, 4, dan 5 dibuat pada Prab untuk mengubah alamat IP kembali menjadi nama host. Berkas yang dibuat mencakup PTR Abbey, Penny, Prab, Tedd, Vault, dan Core.
 
 ```sh
@@ -192,23 +193,25 @@ curl -I http://static.k17.com/orion/uji.php
 <img width="400" height="208" alt="15-eternal-orion" src="https://github.com/user-attachments/assets/de2a29d4-f6ef-40a7-afec-e67843d10dc9" />
 
 ## 16. Benchmark
+Menguji kemampuan web server (melalui resolusi DNS yang sudah dibuat) dalam menangani concurrent requests. Ini membuktikan bahwa resolusi domain ke IP web server berjalan cukup cepat dan stabil untuk menerima beban traffic.
 
 Perintah benchmark yang dipakai dalam catatan kelompok adalah `ab -n 250 -c 10` untuk `www.k17.com` dan `static.k17.com`. Keluaran lengkap benchmark perlu dicocokkan dengan hasil Jude sebelum angka performa dicantumkan.
 
 ## 17. TXT klien
-
+Menguji pembacaan metadata atau teks arbitrer yang disisipkan ke dalam DNS melalui TXT Record, yang pada skenario real-world sering digunakan untuk validasi kepemilikan domain, SPF, atau DKIM.
 TXT record pada Prab ditambahkan untuk Alpha, Beta, Gamma, Delta, dan Epsilon. Isi masing-masing adalah nama klien yang bersangkutan.
 
 ## 18. TTL dan cache DNS
+Analisis perilaku DNS Cache. Dengan menurunkan nilai TTL (Time to Live) menjadi 15 detik dan merubah IP, kita memvalidasi tiga kondisi: propagasi awal, masa penahanan cache (di mana klien masih mendapat IP lama sebelum TTL kedaluwarsa), dan resolusi IP baru setelah cache dibersihkan.
 
 Percobaan TTL dilakukan dengan mengubah sementara alamat Abbey ke `10.72.3.99` dengan TTL 15 detik. Setelah pengamatan cache, alamat Abbey perlu kembali ke `10.72.3.2`. Hasil uji cache lengkap belum disertakan.
 
 ## 19. CNAME eksternal
-
+Menguji kemampuan DNS forwarder dan rekursi. Memastikan bahwa server DNS lokal mampu menyelesaikan (resolve) CNAME yang merujuk ke domain di luar zona otoritatifnya (ke internet publik seperti http.badssl.com).
 `outbound.k17.com` ditambahkan sebagai CNAME yang menunjuk `http.badssl.com.` pada zona Prab. Query DNS dan HTTP akhir masih perlu dicocokkan dengan hasil uji Jude.
 
 ## 20. Pemulihan layanan
-
+Mengatasi isu volatile state (kehilangan konfigurasi) pada container GNS3 saat di-reboot. Implementasi hook scripts (boot-prab.sh dll) pada /etc/network/interfaces untuk memastikan routing, hostname, dan service daemon (BIND9) otomatis bangkit (autostart) dan kembali beroperasi normal tanpa intervensi manual.
 Skrip jaringan, NAT, dan DNS disimpan untuk membantu pemulihan setelah node dijalankan lagi. Pemeriksaan sesudah restart harus meliputi gateway, NAT, DNS, Apache, Nginx, PHP-FPM, serta halaman web. Ekspor GNS3 membawa topologi dan skrip `/root`, tetapi file konfigurasi layanan di `/etc/bind`, `/etc/apache2`, dan `/etc/nginx` tidak ikut terbawa.
 
 ## Kesimpulan
