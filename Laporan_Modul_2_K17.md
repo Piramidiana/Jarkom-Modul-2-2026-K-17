@@ -62,6 +62,9 @@ dig @10.72.5.3 k17.com SOA +short
 
 Hasil saat diuji: kedua server menjawab serial `2026093001`. Serial dapat berubah ketika zona diperbarui.
 
+<img width="940" height="580" alt="4 bukti" src="https://github.com/user-attachments/assets/34ebd76b-f96b-4f13-8d0a-946979b4cbe3" />
+
+
 ## 5. A record
 Pendefinisian identitas node secara system-wide dan pemetaan DNS (Forward Lookup). Memastikan setiap entitas memiliki hostname yang valid dan terdaftar A Record-nya di server DNS.
 Zona `k17.com` berisi alamat host Alpha sampai Molly. Contoh pengujian dari Alpha: `obladi.k17.com` menjawab `10.72.5.4` melalui Prab, dan `desmond.k17.com` menjawab `10.72.5.5` melalui Tedd.
@@ -71,12 +74,18 @@ nslookup obladi.k17.com 10.72.5.2
 nslookup desmond.k17.com 10.72.5.3
 ```
 
+<img width="959" height="490" alt="05 hostname record" src="https://github.com/user-attachments/assets/5f982305-0842-445b-a12c-17242ceb4536" />
+
+
 ## 6. Transfer zona
 Memvalidasi proses replikasi zona (AXFR/IXFR) antara Master dan Slave. Indikator keberhasilannya adalah sinkronisasi nilai Serial Number pada record SOA (Start of Authority) di kedua server.
 
 Tedd mengambil zona utama dan zona reverse subnet 3, 4, serta 5 dari Prab. Kecocokan SOA di kedua server menjadi salah satu pemeriksaan transfer zona.
 
 Hasil pemeriksaan awal: Prab dan Tedd menjawab SOA yang sama. Keluaran transfer zona sesudah perubahan akhir belum disertakan.
+
+<img width="959" height="270" alt="06 bukti serial sinkronisasii" src="https://github.com/user-attachments/assets/62226984-27ef-427d-aa0d-9887499988fe" />
+
 
 ## 7. Nama layanan
 (Service Records & Load Balancing): Penggunaan CNAME untuk aliasing layanan web (seperti www dan static) dan A Record ganda (seperti vault dan core) yang secara otomatis memicu mekanisme DNS Round-Robin untuk distribusi beban (load balancing) sederhana.
@@ -86,6 +95,7 @@ Nama `vault.k17.com` mempunyai dua alamat backend (`10.72.5.4` dan `10.72.5.5`),
 dig @10.72.5.2 vault.k17.com +short
 dig @10.72.5.2 core.k17.com +short
 ```
+<img width="959" height="575" alt="berhubungan dengan soal nomor 7" src="https://github.com/user-attachments/assets/6343aad2-757d-4638-924a-56b008968d1c" />
 
 ## 8. Reverse DNS
 (Service Records & Load Balancing): Penggunaan CNAME untuk aliasing layanan web (seperti www dan static) dan A Record ganda (seperti vault dan core) yang secara otomatis memicu mekanisme DNS Round-Robin untuk distribusi beban (load balancing) sederhana.
@@ -94,7 +104,9 @@ Zona reverse subnet 3, 4, dan 5 dibuat pada Prab untuk mengubah alamat IP kembal
 ```sh
 dig @10.72.5.2 -x 10.72.3.2 +short
 dig @10.72.5.2 -x 10.72.4.2 +short
-```
+
+<img width="951" height="562" alt="08 bukti " src="https://github.com/user-attachments/assets/84b19219-d3b9-4c12-89ae-56d6ad2a5a6c" />
+
 
 Hasil query PTR akhir belum ada pada dokumentasi yang dikumpulkan.
 
@@ -197,22 +209,40 @@ Menguji kemampuan web server (melalui resolusi DNS yang sudah dibuat) dalam mena
 
 Perintah benchmark yang dipakai dalam catatan kelompok adalah `ab -n 250 -c 10` untuk `www.k17.com` dan `static.k17.com`. Keluaran lengkap benchmark perlu dicocokkan dengan hasil Jude sebelum angka performa dicantumkan.
 
+<img width="953" height="275" alt="16 bukti stress test ApacheBench" src="https://github.com/user-attachments/assets/cc91967f-8538-4bb7-a654-b645dc0e296e" />
+
+<img width="959" height="599" alt="16 buktii" src="https://github.com/user-attachments/assets/6ea6d478-61cb-4e07-b9f4-9646f6732582" />
+
 ## 17. TXT klien
 Menguji pembacaan metadata atau teks arbitrer yang disisipkan ke dalam DNS melalui TXT Record, yang pada skenario real-world sering digunakan untuk validasi kepemilikan domain, SPF, atau DKIM.
 TXT record pada Prab ditambahkan untuk Alpha, Beta, Gamma, Delta, dan Epsilon. Isi masing-masing adalah nama klien yang bersangkutan.
+
+<img width="959" height="279" alt="17 buktiii" src="https://github.com/user-attachments/assets/dd1d24fd-7b94-42d0-9d78-1f8ef8149d4a" />
+
 
 ## 18. TTL dan cache DNS
 Analisis perilaku DNS Cache. Dengan menurunkan nilai TTL (Time to Live) menjadi 15 detik dan merubah IP, kita memvalidasi tiga kondisi: propagasi awal, masa penahanan cache (di mana klien masih mendapat IP lama sebelum TTL kedaluwarsa), dan resolusi IP baru setelah cache dibersihkan.
 
 Percobaan TTL dilakukan dengan mengubah sementara alamat Abbey ke `10.72.3.99` dengan TTL 15 detik. Setelah pengamatan cache, alamat Abbey perlu kembali ke `10.72.3.2`. Hasil uji cache lengkap belum disertakan.
 
+<img width="959" height="93" alt="18 bukti tangkapan" src="https://github.com/user-attachments/assets/6a36bd7d-3d17-4596-b881-6417d7b3649e" />
+
+<img width="959" height="101" alt="18 buktii" src="https://github.com/user-attachments/assets/5becd442-2f39-44a6-8a57-217447f30fd1" />
+
 ## 19. CNAME eksternal
 Menguji kemampuan DNS forwarder dan rekursi. Memastikan bahwa server DNS lokal mampu menyelesaikan (resolve) CNAME yang merujuk ke domain di luar zona otoritatifnya (ke internet publik seperti http.badssl.com).
 `outbound.k17.com` ditambahkan sebagai CNAME yang menunjuk `http.badssl.com.` pada zona Prab. Query DNS dan HTTP akhir masih perlu dicocokkan dengan hasil uji Jude.
 
+<img width="957" height="475" alt="19 bukti di alpha" src="https://github.com/user-attachments/assets/c8c7d31c-c9cf-4502-96d9-5ab7f028508e" />
+
+<img width="959" height="318" alt="19 bukti tangkap" src="https://github.com/user-attachments/assets/f645da62-8bc0-4b92-a889-3f3ae9f2168d" />
+
 ## 20. Pemulihan layanan
 Mengatasi isu volatile state (kehilangan konfigurasi) pada container GNS3 saat di-reboot. Implementasi hook scripts (boot-prab.sh dll) pada /etc/network/interfaces untuk memastikan routing, hostname, dan service daemon (BIND9) otomatis bangkit (autostart) dan kembali beroperasi normal tanpa intervensi manual.
 Skrip jaringan, NAT, dan DNS disimpan untuk membantu pemulihan setelah node dijalankan lagi. Pemeriksaan sesudah restart harus meliputi gateway, NAT, DNS, Apache, Nginx, PHP-FPM, serta halaman web. Ekspor GNS3 membawa topologi dan skrip `/root`, tetapi file konfigurasi layanan di `/etc/bind`, `/etc/apache2`, dan `/etc/nginx` tidak ikut terbawa.
+
+<img width="375" height="131" alt="20 bukti " src="https://github.com/user-attachments/assets/54418bbf-2335-4c33-bb03-19b90b79b1ef" />
+
 
 ## Kesimpulan
 
