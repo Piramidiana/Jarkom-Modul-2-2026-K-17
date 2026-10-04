@@ -25,6 +25,9 @@ Topologi memakai Rootkit sebagai router, NAT1 sebagai jalur keluar, dan lima sub
 | `10.72.4.0/24` | `10.72.4.1` | Penny |
 | `10.72.5.0/24` | `10.72.5.1` | Prab, Tedd, Obladi, Desmond, Oblada, Molly |
 
+<img width="959" height="599" alt="01-topologi-gns3" src="https://github.com/user-attachments/assets/a95ea4de-692a-44da-93db-77aff8642158" />
+
+
 ## 2. Meskipun The Mesh beroperasi dalam bayang-bayang, Rootkit menyadari bahwa Entitas di dalamnya masih membutuhkan asupan paket dari dunia luar. Buka jalur menuju NAT dengan memastikan antarmuka WAN di router rootkit aktif. Konfigurasikan NAT agar dapat meneruskan lalu lintas keluar bagi seluruh alamat internal, sehingga semua host di dalam jaringan dapat menjangkau internet publik menggunakan IP address.
 
 Interface `eth0` Rootkit terhubung ke NAT1 dengan gateway `192.168.122.1`. Saat diuji, Rootkit berhasil ping `8.8.8.8`. IP pada sisi NAT dapat berubah ketika node dinyalakan ulang.
